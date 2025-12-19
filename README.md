@@ -9,7 +9,6 @@ GnmiYangConnector provides a Robot Framework library for interacting with networ
 ## Features
 
 - gNMI protocol support
-- YANG model parsing and validation
 - Robot Framework keyword library
 - Python 3.10+ support
 
@@ -19,38 +18,62 @@ GnmiYangConnector provides a Robot Framework library for interacting with networ
 pip install robotframework-gnmi-yang-connector
 ```
 
-## Development
+## Available Keywords
 
-### Setup
+GnmiYangConnector provides the following Robot Framework keywords:
 
-This project uses Poetry for dependency management and packaging.
+### gNMI Keywords
 
-```bash
-# Install dependencies
-poetry install
+- **gNMI connect to device** - Establish a gNMI connection to a device using pyATS testbed configuration
+- **gNMI close session** - Close gNMI session to a specific device
+- **gNMI close all sessions** - Close all active gNMI sessions
+- **gNMI get capabilities** - Retrieve device capabilities via gNMI
+- **gNMI get** - Perform gNMI GET operation to retrieve configuration or state data
+- **gNMI set** - Perform gNMI SET operation to update, replace, or delete configuration
+- **gNMI subscribe** - Subscribe to telemetry data streams using gNMI
 
-# Run tests
-poetry run pytest
+### gNOI Keywords (gRPC Network Operations Interface)
 
-# Run linting and formatting
-make prepush
+- **gNOI ping** - Execute ping operation on the device
+- **gNOI traceroute** - Execute traceroute operation on the device
+- **gNOI system time** - Retrieve system time from the device
+- **gNOI reboot** - Trigger a device reboot
+
+### gRPC Keywords
+
+- **gRPC action** - Execute custom gRPC actions on protocol buffers with provided parameters
+
+## Usage Example
+
+Here's a basic example of using the library:
+
+```robotframework
+*** Settings ***
+Library           pyats.robot.pyATSRobot
+Library           GnmiYangConnector
+
+Suite Setup       use testbed "${TESTBED}"
+Suite Teardown    gNMI close all sessions
+
+*** Variables ***
+${TESTBED}       ${CURDIR}/testbed.yaml
+${DEVICE}        xr1
+
+*** Test Cases ***
+Get Capabilities
+    [Setup]    gNMI connect to device    ${DEVICE}
+    ${caps}=    gNMI get capabilities    ${DEVICE}
+    Log   ${caps}
+
+Perform Get Operation
+    [Setup]    gNMI connect to device    ${DEVICE}
+    VAR   ${prefix}    Cisco-IOS-XR-um-interface-cfg
+    VAR   @{path}    ${prefix}:interfaces
+    ${response}=    gNMI get    ${DEVICE}    ${path}    datatype=CONFIG
+    Log   ${response}
 ```
 
-### Pre-commit Hooks
-
-Pre-commit hooks are configured to run code quality checks before commits:
-
-```bash
-pre-commit install
-```
-
-## Testing
-
-Run tests with pytest:
-
-```bash
-poetry run pytest
-```
+For more examples, see the [examples](examples/) directory.
 
 ## License
 
