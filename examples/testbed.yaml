@@ -1,0 +1,17 @@
+devices:
+  xr1:
+    os: iosxr
+    connections:
+      gnmi:
+        class: yang.connector.Gnmi
+        protocol: gnmi
+        ip: 10.50.202.27
+        port: 57400
+        username: "%ENV{XR_USERNAME}"
+        password: "%ENV{XR_PASSWORD}"
+        skip_verify: True
+        # ca_cert_file: CA.cer
+        # root_certificate: 'certs/CA.cer'
+        # private_key: 'certs/PE1.key'
+        # certificate_chain: 'certs/PE1.crt'
+        # ssl_name_override: 'PE1.example.com'
